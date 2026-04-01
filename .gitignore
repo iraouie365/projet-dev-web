@@ -1,0 +1,12 @@
+# Ignorer le fichier de configuration secret
+config/config.php
+
+# Ignorer le dossier des dépendances si vous en ajoutez plus tard
+vendor/
+
+# Ignorer les logs et cache
+*.log
+.cache/
+
+# Ignorer la configuration de VS Code
+.vscode/

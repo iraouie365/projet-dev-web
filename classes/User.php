@@ -4,7 +4,7 @@ require_once __DIR__ . '/Database.php';
 class User {
     public static function findByEmail($email) {
         $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE LOWER(TRIM(email)) = LOWER(TRIM(?))");
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -28,6 +28,10 @@ class User {
             INSERT INTO users (nom,email,password,role,chef_id)
             VALUES (?,?,?,?,?)
         ");
-        return $stmt->execute([$nom,$email,$hash,$role,$chef_id]);
+        try {
+            return $stmt->execute([$nom,$email,$hash,$role,$chef_id]);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }

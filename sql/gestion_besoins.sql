@@ -74,6 +74,6 @@ INSERT INTO users (nom,email,password,role)
 VALUES (
   'Admin',
   'admin@example.com',
-  '$2y$10$PVvJnIUJKb6lFpO8qd0sYeEXVadyLqOi3t3/NJM74m2fwMgTh1gVm',
+    '$2y$10$CSRCoXVeHp7yFusX3HcK/OYdAw.Aub.oVHN1OjL5r6kvjXCImQaOC',
   'admin'
 );

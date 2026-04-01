@@ -21,30 +21,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
 
 // Handle create/update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {
-    $chef_id = !empty($_POST['chef_id']) ? $_POST['chef_id'] : null;
+  $nom = trim($_POST['nom'] ?? '');
+  $email = strtolower(trim($_POST['email'] ?? ''));
+  $role = $_POST['role'] ?? 'demandeur';
+  $password = $_POST['password'] ?? '';
+  $chef_id = !empty($_POST['chef_id']) ? (int) $_POST['chef_id'] : null;
+
+  if ($nom === '' || $email === '') {
+    $message = "Nom et email sont obligatoires.";
+  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $message = "Email invalide.";
+  }
     
-    if (!empty($_POST['user_id'])) {
+  if ($message === '' && !empty($_POST['user_id'])) {
         // Update
         $user_id = (int) $_POST['user_id'];
+    $existing = User::findByEmail($email);
+    if ($existing && (int) $existing['id'] !== $user_id) {
+      $message = "Cet email existe deja.";
+    }
+
+    if ($message !== '') {
+      // Keep message set above.
+    } else {
         $stmt = $pdo->prepare("
             UPDATE users SET nom=?, email=?, role=?, chef_id=? WHERE id=?
         ");
-        if ($stmt->execute([$_POST['nom'], $_POST['email'], $_POST['role'], $chef_id, $user_id])) {
+    if ($stmt->execute([$nom, $email, $role, $chef_id, $user_id])) {
             $message = "Utilisateur modifié.";
-        }
     } else {
+      $message = "Erreur lors de la modification de l'utilisateur.";
+    }
+        }
+  } elseif ($message === '') {
         // Create
-        if (strlen($_POST['password']) < 6) {
+    if (User::findByEmail($email)) {
+      $message = "Cet email existe deja.";
+    } elseif (strlen($password) < 6) {
             $message = "Le mot de passe doit contenir au moins 6 caractères.";
         } else {
-            User::create(
-                $_POST['nom'],
-                $_POST['email'],
-                $_POST['password'],
-                $_POST['role'],
-                $chef_id
-            );
-            $message = "Utilisateur créé avec succès.";
+      if (User::create($nom, $email, $password, $role, $chef_id)) {
+        $message = "Utilisateur créé avec succès.";
+      } else {
+        $message = "Erreur lors de la création de l'utilisateur.";
+      }
         }
     }
 }
