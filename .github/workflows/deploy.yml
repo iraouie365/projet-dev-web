@@ -1,4 +1,4 @@
-name: Deploiement Automatique FTP
+name: Deploiement Automatique SFTP
 
 on:
   push:
@@ -14,15 +14,15 @@ jobs:
     - name: 🚚 Récupération du code
       uses: actions/checkout@v4
 
-    - name: 📂 Envoi des fichiers via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+    - name: 🗑️ Nettoyage avant envoi
+      run: rm -rf .git config/config.example.php
+
+    - name: 📂 Envoi des fichiers via SFTP
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        protocol: ftps
-        server-dir: /www/
-        exclude: |
-          **/.git*
-          **/.git*/**
-          config/config.example.php
+        port: 22
+        local_path: './'
+        remote_path: '/www/'
