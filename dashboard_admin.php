@@ -14,7 +14,8 @@ if ($filterStatut || $filterDemandeur || $filterService || $filterDate) {
     $demandes = array_filter($demandes, function($d) use ($filterStatut, $filterDemandeur, $filterService, $filterDate) {
         if ($filterStatut && $d['statut'] !== $filterStatut) return false;
         if ($filterDemandeur && strpos(strtolower($d['demandeur_nom']), strtolower($filterDemandeur)) === false) return false;
-        if ($filterService && !$d['service'] || ($filterService && strpos(strtolower($d['service']), strtolower($filterService)) === false)) return false;
+    $service = $d['service'] ?? '';
+    if ($filterService && ($service === '' || strpos(strtolower($service), strtolower($filterService)) === false)) return false;
         if ($filterDate && !str_starts_with($d['created_at'], $filterDate)) return false;
         return true;
     });
@@ -96,7 +97,7 @@ $totalCount = count($demandes);
           <?php echo htmlspecialchars($d['statut']); ?>
         </span>
       </td>
-      <td><?php echo $d['service'] ? '<code>' . htmlspecialchars($d['service']) . '</code>' : '<em class="text-muted">-</em>'; ?></td>
+      <td><?php echo !empty($d['service']) ? '<code>' . htmlspecialchars($d['service']) . '</code>' : '<em class="text-muted">-</em>'; ?></td>
       <td>
         <a href="traiter_demande.php?id=<?php echo $d['id']; ?>" class="btn btn-sm btn-primary">
           Traiter
