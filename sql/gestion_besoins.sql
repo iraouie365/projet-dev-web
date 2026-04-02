@@ -22,6 +22,12 @@ INSERT INTO types_besoins (libelle) VALUES
 ('Matériel'), ('Logiciel'), ('Service'), ('Formation'), ('Autre');
 
 
+CREATE TABLE services (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL UNIQUE
+);
+
+
 CREATE TABLE demandes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     demandeur_id INT NOT NULL,
