@@ -5,7 +5,7 @@ class Database {
 
     private function __construct() {
         require __DIR__ . '/../config/db.php';
-        $this->pdo = $pdo;
+        $this->pdo = (isset($pdo) && $pdo instanceof PDO) ? $pdo : $this->createPdoFromConfig();
         $this->ensureServicesTable();
     }
 
@@ -21,5 +21,13 @@ class Database {
             id INT AUTO_INCREMENT PRIMARY KEY,
             nom VARCHAR(100) NOT NULL UNIQUE
         )");
+    }
+
+    private function createPdoFromConfig() {
+        require __DIR__ . '/../config/config.php';
+        $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+        $pdo = new PDO($dsn, $user, $pass);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $pdo;
     }
 }
