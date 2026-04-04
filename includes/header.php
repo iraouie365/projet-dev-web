@@ -45,6 +45,7 @@ $unreadCount = Notification::countUnread($user['id']);
           <li class="nav-item"><a class="nav-link" href="admin_types.php"><i class="bi bi-tags me-1"></i>Types de besoins</a></li>
           <li class="nav-item"><a class="nav-link" href="admin_services.php"><i class="bi bi-briefcase me-1"></i>Services</a></li>
         <?php endif; ?>
+        <li class="nav-item"><a class="nav-link" href="infos_personnelles.php"><i class="bi bi-person-vcard me-1"></i>Infos personnelles</a></li>
         <li class="nav-item"><a class="nav-link" href="changer_mot_de_passe.php"><i class="bi bi-shield-lock me-1"></i>Mot de passe</a></li>
       </ul>
       <a class="nav-link text-white me-3 position-relative notification-link" href="notifications.php">

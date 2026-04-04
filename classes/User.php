@@ -45,4 +45,14 @@ class User {
             return false;
         }
     }
+
+    public static function updateProfile($id, $nom, $email) {
+        $pdo = Database::getInstance();
+        $stmt = $pdo->prepare("UPDATE users SET nom = ?, email = ? WHERE id = ?");
+        try {
+            return $stmt->execute([$nom, $email, $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
