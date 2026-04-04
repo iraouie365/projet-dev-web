@@ -24,7 +24,10 @@ class Database {
     }
 
     private function createPdoFromConfig() {
-        require __DIR__ . '/../config/config.php';
+        $host = getenv('DB_HOST') ?: 'mysql-eliraoui.alwaysdata.net';
+        $dbname = getenv('DB_NAME') ?: 'eliraoui_gdeb';
+        $user = getenv('DB_USER') ?: 'eliraoui';
+        $pass = getenv('DB_PASS') ?: 'iraoui0101';
         $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
         $pdo = new PDO($dsn, $user, $pass);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
