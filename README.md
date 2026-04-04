@@ -100,6 +100,7 @@ L'administrateur est créé automatiquement avec la base de données:
 - ✅ Ajouter des pièces jointes (PDF, DOC, XLS, images)
 - ✅ Suivre l'état de ses demandes
 - ✅ Recevoir des notifications
+- ✅ Changer son mot de passe depuis son espace connecté
 
 ### Pour les validateurs
 - ✅ Tableau de bord des demandes à valider
@@ -196,6 +197,12 @@ gestion_besoins/
 3. Enregistrer
 
 ⚠️ Note: Le mot de passe ne peut pas être changé depuis l'édition (pour sécurité).
+
+### Changer son mot de passe
+
+1. Ouvrir le lien "Mot de passe" dans la barre de navigation
+2. Saisir le mot de passe actuel
+3. Saisir et confirmer le nouveau mot de passe
 
 ### Supprimer un utilisateur
 

@@ -34,4 +34,15 @@ class User {
             return false;
         }
     }
+    
+    public static function updatePassword($id, $password) {
+        $pdo = Database::getInstance();
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+        try {
+            return $stmt->execute([$hash, $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
