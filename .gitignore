@@ -1,5 +1,5 @@
 # Ignorer le fichier de configuration secret
-config/config.php
+#config/config.php
 
 # Ignorer le dossier des dépendances si vous en ajoutez plus tard
 vendor/
