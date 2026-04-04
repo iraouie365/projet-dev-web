@@ -133,7 +133,7 @@ if (!empty($_GET['edit_id'])) {
 
   <div class="col-md-6">
     <h4>Liste des utilisateurs</h4>
-    <table class="table table-sm">
+    <table class="table table-sm table-users">
       <thead>
         <tr><th>#</th><th>Nom</th><th>Email</th><th>Rôle</th><th>Actions</th></tr>
       </thead>
