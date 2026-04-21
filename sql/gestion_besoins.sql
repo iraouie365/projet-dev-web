@@ -38,6 +38,7 @@ CREATE TABLE demandes (
         NOT NULL DEFAULT 'en_attente',
     validateur_id INT NULL,
     admin_id INT NULL,
+    service VARCHAR(100) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL,
     FOREIGN KEY (demandeur_id) REFERENCES users(id),

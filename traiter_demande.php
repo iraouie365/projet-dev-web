@@ -89,7 +89,8 @@ $services = $pdo->query("SELECT * FROM services ORDER BY nom")->fetchAll(PDO::FE
           </span>
         </p>
         <p><strong>Date de création :</strong> <?php echo date('d/m/Y H:i', strtotime($demande['created_at'])); ?></p>
-        <p><strong>Service assigné :</strong> <?php echo $demande['service'] ? htmlspecialchars($demande['service']) : '<em class="text-muted">Non assigné</em>'; ?></p>
+        <?php $serviceAssigne = $demande['service'] ?? null; ?>
+        <p><strong>Service assigné :</strong> <?php echo $serviceAssigne ? htmlspecialchars($serviceAssigne) : '<em class="text-muted">Non assigné</em>'; ?></p>
       </div>
     </div>
 
@@ -143,7 +144,7 @@ $services = $pdo->query("SELECT * FROM services ORDER BY nom")->fetchAll(PDO::FE
         <option value="">-- Aucun service --</option>
         <?php foreach ($services as $s): ?>
           <option value="<?php echo htmlspecialchars($s['nom']); ?>" 
-                  <?php echo ($demande['service'] === $s['nom']) ? 'selected' : ''; ?>>
+                  <?php echo (($demande['service'] ?? null) === $s['nom']) ? 'selected' : ''; ?>>
             <?php echo htmlspecialchars($s['nom']); ?>
           </option>
         <?php endforeach; ?>

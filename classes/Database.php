@@ -7,6 +7,7 @@ class Database {
         require __DIR__ . '/../config/db.php';
         $this->pdo = (isset($pdo) && $pdo instanceof PDO) ? $pdo : $this->createPdoFromConfig();
         $this->ensureServicesTable();
+        $this->ensureDemandesServiceColumn();
     }
 
     public static function getInstance() {
@@ -21,6 +22,15 @@ class Database {
             id INT AUTO_INCREMENT PRIMARY KEY,
             nom VARCHAR(100) NOT NULL UNIQUE
         )");
+    }
+
+    private function ensureDemandesServiceColumn() {
+        $stmt = $this->pdo->query("SHOW COLUMNS FROM demandes LIKE 'service'");
+        $columnExists = $stmt && $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$columnExists) {
+            $this->pdo->exec("ALTER TABLE demandes ADD COLUMN service VARCHAR(100) NULL AFTER admin_id");
+        }
     }
 
     private function createPdoFromConfig() {
