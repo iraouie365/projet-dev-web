@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  mon-serveur-web:
+    build: .                 # Dit à Docker de lire le Dockerfile d'à côté
+    container_name: devops1  # Le nom du conteneur
+    ports:
+      - "8080:80"            # Connecte votre PC au port 80 du conteneur
+    volumes:
+      - .:/var/www/html/     # 🌟 LA MAGIE EST ICI (voir explication plus bas)

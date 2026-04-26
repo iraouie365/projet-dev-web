@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       justify-content: center;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       overflow: hidden;
-      perspective: 1000px;
     }
     
     /* Animated Background */
@@ -96,16 +95,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
     }
     
-    /* 3D Container */
+    /* Login container */
     .login-container {
       width: 100%;
       max-width: 450px;
       padding: 20px;
       z-index: 1;
-      transform-style: preserve-3d;
     }
     
-    /* 3D Card */
+    /* Login card */
     .login-card {
       background: rgba(255, 255, 255, 0.95);
       border-radius: 24px;
@@ -114,9 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         0 0 0 1px rgba(255, 255, 255, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.5);
       overflow: hidden;
-      transform-style: preserve-3d;
-      transform: rotateY(0deg) rotateX(0deg);
-      transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+      transition: box-shadow 0.3s ease;
       animation: cardEntrance 1s ease-out;
     }
     
@@ -130,23 +126,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     @keyframes cardEntrance {
       0% {
         opacity: 0;
-        transform: rotateX(-30deg) translateY(-100px) scale(0.8);
+        transform: translateY(-100px) scale(0.8);
       }
       50% {
         opacity: 1;
       }
       100% {
-        transform: rotateX(0deg) translateY(0) scale(1);
+        transform: translateY(0) scale(1);
       }
     }
     
-    /* 3D Header */
+    /* Header */
     .login-header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 45px 30px;
       text-align: center;
       color: white;
-      transform: translateZ(20px);
       position: relative;
       overflow: hidden;
     }
@@ -187,13 +182,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       box-shadow: 
         0 10px 30px rgba(0, 0, 0, 0.2),
         inset 0 -5px 20px rgba(0, 0, 0, 0.1);
-      transform-style: preserve-3d;
-      transform: translateZ(40px);
     }
     
     @keyframes logoFloat {
-      0%, 100% { transform: translateZ(40px) translateY(0); }
-      50% { transform: translateZ(40px) translateY(-10px); }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
     
     .login-header h2 {
@@ -201,25 +194,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-size: 1.9rem;
       font-weight: 700;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      transform: translateZ(30px);
     }
     
     .login-header p {
       margin: 12px 0 0;
       opacity: 0.9;
       font-size: 1rem;
-      transform: translateZ(25px);
     }
     
-    /* 3D Body */
+    /* Body */
     .login-body {
       padding: 40px 35px;
-      transform: translateZ(10px);
     }
     
     .form-floating {
       margin-bottom: 22px;
-      transform-style: preserve-3d;
     }
     
     .form-floating > .form-control {
@@ -236,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       box-shadow: 
         0 0 0 0.2rem rgba(102, 126, 234, 0.15),
         0 10px 30px rgba(102, 126, 234, 0.2);
-      transform: translateZ(5px) scale(1.02);
+      transform: scale(1.02);
     }
     
     .form-floating > label {
@@ -262,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       color: #764ba2;
     }
     
-    /* 3D Button */
+    /* Button */
     .btn-login {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border: none;
@@ -276,7 +265,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       margin-top: 15px;
       position: relative;
       overflow: hidden;
-      transform-style: preserve-3d;
       box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
     }
     
@@ -301,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     .btn-login:hover {
-      transform: translateY(-4px) translateZ(10px) scale(1.02);
+      transform: translateY(-4px) scale(1.02);
       box-shadow: 
         0 15px 35px rgba(102, 126, 234, 0.5),
         0 0 20px rgba(118, 75, 162, 0.3);
@@ -379,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <div class="login-container">
-  <div class="login-card" id="loginCard">
+  <div class="login-card">
     <div class="login-header">
       <div class="login-logo">
         <i class="bi bi-shield-lock-fill"></i>
@@ -413,27 +401,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </div>
 
-<script>
-  // 3D Card Tilt Effect
-  const card = document.getElementById('loginCard');
-  const container = document.querySelector('.login-container');
-  
-  container.addEventListener('mousemove', (e) => {
-    const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
-    
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-  });
-  
-  container.addEventListener('mouseleave', () => {
-    card.style.transform = 'rotateX(0deg) rotateY(0deg)';
-  });
-</script>
 </body>
 </html>
