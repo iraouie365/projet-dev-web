@@ -10,9 +10,40 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $del_id = (int) $_POST['delete_id'];
     if ($del_id !== $user['id']) { // Prevent self-delete
-        $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-        if ($stmt->execute([$del_id])) {
+        try {
+            $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+            $stmt->execute([$del_id]);
             $message = "Utilisateur supprimé.";
+        } catch (PDOException $e) {
+            $usageStmt = $pdo->prepare("
+                SELECT
+                    (SELECT COUNT(*) FROM demandes WHERE demandeur_id = ?) AS demandes_demandeur,
+                    (SELECT COUNT(*) FROM demandes WHERE validateur_id = ?) AS demandes_validateur,
+                    (SELECT COUNT(*) FROM demandes WHERE admin_id = ?) AS demandes_admin,
+                    (SELECT COUNT(*) FROM validation WHERE validateur_id = ?) AS validations
+            ");
+            $usageStmt->execute([$del_id, $del_id, $del_id, $del_id]);
+            $usage = $usageStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+            $blockedReasons = [];
+            if (!empty($usage['demandes_demandeur'])) {
+                $blockedReasons[] = $usage['demandes_demandeur'] . ' demande(s)';
+            }
+            if (!empty($usage['demandes_validateur'])) {
+                $blockedReasons[] = $usage['demandes_validateur'] . ' demande(s) en tant que validateur';
+            }
+            if (!empty($usage['demandes_admin'])) {
+                $blockedReasons[] = $usage['demandes_admin'] . ' demande(s) traitée(s) en tant qu\'admin';
+            }
+            if (!empty($usage['validations'])) {
+                $blockedReasons[] = $usage['validations'] . ' validation(s)';
+            }
+
+            if ($blockedReasons) {
+                $message = "Suppression impossible: cet utilisateur est encore lié à " . implode(', ', $blockedReasons) . ".";
+            } else {
+                $message = "Suppression impossible: cet utilisateur est encore référencé par des données liées.";
+            }
         }
     } else {
         $message = "Erreur: Vous ne pouvez pas vous supprimer.";

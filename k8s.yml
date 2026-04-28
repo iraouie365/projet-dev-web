@@ -1,0 +1,38 @@
+# 1. LE DEPLOYMENT (Les serveurs)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mon-site-web-depl
+spec:
+  replicas: 2               # Magique : K8s va lancer 2 copies de votre site !
+  selector:
+    matchLabels:
+      app: mon-site-web
+  template:
+    metadata:
+      labels:
+        app: mon-site-web
+    spec:
+      containers:
+      - name: mon-site-web-container
+        image: mon-app-php:latest
+        imagePullPolicy: IfNotPresent # Dit à K8s d'utiliser l'image sur votre PC, pas sur internet
+        ports:
+        - containerPort: 80
+
+---
+# 2. LE SERVICE (La porte d'entrée)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mon-site-web-service
+spec:
+  type: LoadBalancer        # Crée un accès vers l'extérieur
+  selector:
+    app: mon-site-web
+  ports:
+    - port: 8080            # Le port sur votre ordinateur
+      targetPort: 80        # Le port dans le conteneur
+
+
+
