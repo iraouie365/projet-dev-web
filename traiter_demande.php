@@ -1,18 +1,27 @@
 <?php
-require_once __DIR__ . '/includes/header.php';
-require_once __DIR__ . '/classes/Demande.php';
 require_once __DIR__ . '/classes/Database.php';
+require_once __DIR__ . '/classes/Demande.php';
 require_once __DIR__ . '/classes/Notification.php';
 require_once __DIR__ . '/classes/EmailHelper.php';
+
+// Session and authentication check (must be before header output)
+if (session_status() === PHP_SESSION_NONE) session_start();
+if (!isset($_SESSION['user'])) {
+    header('Location: index.php');
+    exit;
+}
+$user = $_SESSION['user'];
 
 $pdo = Database::getInstance();
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
+// Handle missing ID before any output
 if (!$id) {
     header('Location: dashboard_admin.php');
     exit;
 }
 
+// Handle POST before any output
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $newStatut = $_POST['statut'];
   $service = !empty($_POST['service']) ? $_POST['service'] : null;
@@ -36,6 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   header('Location: dashboard_admin.php');
   exit;
 }
+
+// Now safe to include header which outputs HTML
+require_once __DIR__ . '/includes/header.php';
 
 // Get demande details
 $stmt = $pdo->prepare("
