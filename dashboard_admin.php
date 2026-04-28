@@ -2,6 +2,18 @@
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/classes/Demande.php';
 
+$message = '';
+
+// Handle delete
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    $del_id = (int) $_POST['delete_id'];
+    if (Demande::delete($del_id)) {
+        $message = 'Demande supprimée avec succès.';
+    } else {
+        $message = 'Erreur lors de la suppression de la demande.';
+    }
+}
+
 $demandes = Demande::all();
 
 // Filtering
@@ -22,6 +34,10 @@ if ($filterStatut || $filterDemandeur || $filterService || $filterDate) {
 }
 ?>
 <h1 class="mb-4">Toutes les demandes</h1>
+
+<?php if ($message): ?>
+  <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
+<?php endif; ?>
 
 <?php
 // Small summary metrics for hero
@@ -102,6 +118,10 @@ $totalCount = count($demandes);
         <a href="traiter_demande.php?id=<?php echo $d['id']; ?>" class="btn btn-sm btn-primary">
           Traiter
         </a>
+        <form method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette demande ?');">
+          <input type="hidden" name="delete_id" value="<?php echo $d['id']; ?>">
+          <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+        </form>
       </td>
     </tr>
   <?php endforeach; ?>

@@ -70,4 +70,23 @@ class Demande {
         ");
         return $stmt->execute([$statut,$admin_id,$id]);
     }
+
+    public static function delete($id) {
+        $pdo = Database::getInstance();
+        try {
+            // Delete related validation records first
+            $stmt = $pdo->prepare("DELETE FROM validation WHERE demande_id = ?");
+            $stmt->execute([$id]);
+            
+            // Delete related attached files
+            $stmt = $pdo->prepare("DELETE FROM pieces_jointes WHERE demande_id = ?");
+            $stmt->execute([$id]);
+            
+            // Delete the demande itself
+            $stmt = $pdo->prepare("DELETE FROM demandes WHERE id = ?");
+            return $stmt->execute([$id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
