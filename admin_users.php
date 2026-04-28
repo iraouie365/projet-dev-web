@@ -29,34 +29,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
             $stmt->execute([$del_id]);
             $message = "Utilisateur supprimé.";
         } catch (PDOException $e) {
+            // Check only for ACTIVE records (not completed/rejected)
             $usageStmt = $pdo->prepare("
                 SELECT
-                    (SELECT COUNT(*) FROM demandes WHERE demandeur_id = ?) AS demandes_demandeur,
-                    (SELECT COUNT(*) FROM demandes WHERE validateur_id = ?) AS demandes_validateur,
-                    (SELECT COUNT(*) FROM demandes WHERE admin_id = ?) AS demandes_admin,
-                    (SELECT COUNT(*) FROM validation WHERE validateur_id = ?) AS validations
+                    (SELECT COUNT(*) FROM demandes WHERE demandeur_id = ? AND statut NOT IN ('traitee', 'rejettee')) AS demandes_actives,
+                    (SELECT COUNT(*) FROM demandes WHERE validateur_id = ? AND statut NOT IN ('traitee', 'rejettee')) AS demandes_validateur_actives,
+                    (SELECT COUNT(*) FROM demandes WHERE admin_id = ? AND statut NOT IN ('traitee', 'rejettee')) AS demandes_admin_actives
             ");
-            $usageStmt->execute([$del_id, $del_id, $del_id, $del_id]);
+            $usageStmt->execute([$del_id, $del_id, $del_id]);
             $usage = $usageStmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
             $blockedReasons = [];
-            if (!empty($usage['demandes_demandeur'])) {
-                $blockedReasons[] = $usage['demandes_demandeur'] . ' demande(s)';
+            if (!empty($usage['demandes_actives'])) {
+                $blockedReasons[] = $usage['demandes_actives'] . ' demande(s) en cours';
             }
-            if (!empty($usage['demandes_validateur'])) {
-                $blockedReasons[] = $usage['demandes_validateur'] . ' demande(s) en tant que validateur';
+            if (!empty($usage['demandes_validateur_actives'])) {
+                $blockedReasons[] = $usage['demandes_validateur_actives'] . ' demande(s) à valider';
             }
-            if (!empty($usage['demandes_admin'])) {
-                $blockedReasons[] = $usage['demandes_admin'] . ' demande(s) traitée(s) en tant qu\'admin';
-            }
-            if (!empty($usage['validations'])) {
-                $blockedReasons[] = $usage['validations'] . ' validation(s)';
+            if (!empty($usage['demandes_admin_actives'])) {
+                $blockedReasons[] = $usage['demandes_admin_actives'] . ' demande(s) en traitement';
             }
 
             if ($blockedReasons) {
-                $message = "Suppression impossible: cet utilisateur est encore lié à " . implode(', ', $blockedReasons) . ".";
+                $message = "Suppression impossible: cet utilisateur a encore " . implode(', ', $blockedReasons) . " en cours.";
             } else {
-                $message = "Suppression impossible: cet utilisateur est encore référencé par des données liées.";
+                // If no active records block deletion, try again
+                try {
+                    $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+                    $stmt->execute([$del_id]);
+                    $message = "Utilisateur supprimé.";
+                } catch (PDOException $e2) {
+                    $message = "Suppression impossible: cet utilisateur est encore référencé par des données liées.";
+                }
             }
         }
     } else {
