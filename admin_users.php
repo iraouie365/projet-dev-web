@@ -6,6 +6,20 @@ require_once __DIR__ . '/classes/Database.php';
 $pdo = Database::getInstance();
 $message = '';
 
+// Handle password change
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password_id'])) {
+    $pwd_id = (int) $_POST['change_password_id'];
+    $new_password = $_POST['new_password'] ?? '';
+    
+    if (strlen($new_password) < 6) {
+        $message = "Le mot de passe doit contenir au moins 6 caractères.";
+    } elseif (User::updatePassword($pwd_id, $new_password)) {
+        $message = "Mot de passe changé avec succès.";
+    } else {
+        $message = "Erreur lors du changement de mot de passe.";
+    }
+}
+
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $del_id = (int) $_POST['delete_id'];
@@ -177,6 +191,7 @@ if (!empty($_GET['edit_id'])) {
           <td><?php echo htmlspecialchars($u['role']); ?></td>
           <td>
             <a href="?edit_id=<?php echo $u['id']; ?>" class="btn btn-sm btn-warning">Modifier</a>
+            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#passwordModal" data-user-id="<?php echo $u['id']; ?>" data-user-name="<?php echo htmlspecialchars($u['nom']); ?>">Mot de passe</button>
             <?php if ($u['id'] !== $user['id']): ?>
               <form method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr?');">
                 <input type="hidden" name="delete_id" value="<?php echo $u['id']; ?>">
@@ -190,5 +205,40 @@ if (!empty($_GET['edit_id'])) {
     </table>
   </div>
 </div>
+
+<!-- Modal for changing password -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Changer le mot de passe</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post">
+        <div class="modal-body">
+          <p class="mb-3">Utilisateur: <strong id="modalUserName"></strong></p>
+          <div class="mb-3">
+            <label class="form-label">Nouveau mot de passe</label>
+            <input type="password" id="newPassword" name="new_password" class="form-control" required minlength="6" placeholder="Au moins 6 caractères">
+          </div>
+          <input type="hidden" id="changePasswordId" name="change_password_id">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('passwordModal').addEventListener('show.bs.modal', function (e) {
+  const button = e.relatedTarget;
+  document.getElementById('changePasswordId').value = button.getAttribute('data-user-id');
+  document.getElementById('modalUserName').textContent = button.getAttribute('data-user-name');
+  document.getElementById('newPassword').value = '';
+});
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
