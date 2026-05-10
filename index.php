@@ -374,6 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <h2>Gestion des Besoins</h2>
       <p>Connectez-vous à votre compte</p>
+      <p class="text-center text-muted small mt-2">Test Jenkins: modifié le <?php echo date('Y-m-d H:i:s'); ?></p>
     </div>
     <div class="login-body">
       <?php if ($error): ?>
