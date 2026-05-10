@@ -5,7 +5,6 @@ pipeline {
         IMAGE_NAME = "projet-dev-web"
         IMAGE_TAG = "latest"
         DEPLOYMENT_NAME = "projet-dev-web-depl"
-        SERVICE_NAME = "projet-dev-web-service"
     }
 
     stages {
@@ -17,9 +16,7 @@ pipeline {
 
         stage('Load Image To Minikube') {
             steps {
-                sh 'docker save ${IMAGE_NAME}:${IMAGE_TAG} -o ${IMAGE_NAME}.tar'
-                sh 'docker cp ${IMAGE_NAME}.tar minikube:/tmp/${IMAGE_NAME}.tar'
-                sh 'docker exec minikube ctr -n k8s.io images import /tmp/${IMAGE_NAME}.tar'
+                sh 'docker save ${IMAGE_NAME}:${IMAGE_TAG} | docker exec -i minikube ctr -n k8s.io images import -'
             }
         }
 
