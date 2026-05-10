@@ -1,24 +1,17 @@
 pipeline {
     agent any
-    
+
     stages {
-        stage('Préparation') {
+        stage('Test Jenkins') {
             steps {
-                echo '🚀 Démarrage du pipeline Jenkins !'
+                echo 'Jenkins fonctionne avec GitHub'
+                sh 'ls -la'
             }
         }
-        
-        stage('Build Docker') {
+
+        stage('Test Docker') {
             steps {
-                echo '🔨 Ici, le robot va construire l\'image Docker...'
-                // Nous ajouterons la vraie commande docker build plus tard
-            }
-        }
-        
-        stage('Déploiement Render') {
-            steps {
-                echo '🌐 Ici, le robot va dire à Render de mettre le site en ligne !'
-                // Nous ajouterons le lien secret (Hook) vers Render plus tard
+                sh 'docker --version'
             }
         }
     }
