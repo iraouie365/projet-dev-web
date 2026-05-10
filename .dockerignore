@@ -1,0 +1,8 @@
+.git
+.github
+uploads
+*.docx
+*.pdf
+README.md
+README.txt
+docker-compose.yml
