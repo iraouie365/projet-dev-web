@@ -24,8 +24,7 @@ pipeline {
 
         stage('Deploy To Kubernetes') {
             steps {
-                sh "docker cp k8s.yml minikube:/tmp/k8s.yml"
-                sh "docker exec minikube ${KUBECTL} --kubeconfig=${KUBECONFIG} apply -f /tmp/k8s.yml"
+                sh "docker exec -i minikube ${KUBECTL} --kubeconfig=${KUBECONFIG} apply -f - < k8s.yml"
                 sh "docker exec minikube ${KUBECTL} --kubeconfig=${KUBECONFIG} rollout restart deployment/${DEPLOYMENT_NAME}"
             }
         }
